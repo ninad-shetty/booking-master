@@ -11,6 +11,7 @@ FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 COPY --from=build /workspace/target/booking-master-0.0.1-SNAPSHOT.jar app.jar
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
 EXPOSE 8080
 USER 10001
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["sh", "/app/docker-entrypoint.sh"]

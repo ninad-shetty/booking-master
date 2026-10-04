@@ -13,6 +13,14 @@ services:
         fromDatabase:
           name: booking-master-db
           property: connectionString
+      - key: DB_USER
+        fromDatabase:
+          name: booking-master-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: booking-master-db
+          property: password
 
 databases:
   - name: booking-master-db

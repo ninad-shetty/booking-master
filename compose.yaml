@@ -1,1 +1,35 @@
-#services: {}
+services:
+  app:
+    build: .
+    container_name: booking-master-app
+    restart: unless-stopped
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/bookingmaster
+      SPRING_DATASOURCE_USERNAME: bookingmaster
+      SPRING_DATASOURCE_PASSWORD: bookingmaster
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:17-alpine
+    container_name: booking-master-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: bookingmaster
+      POSTGRES_USER: bookingmaster
+      POSTGRES_PASSWORD: bookingmaster
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:

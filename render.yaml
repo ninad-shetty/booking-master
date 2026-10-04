@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: booking-master
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: ADMIN_TOKEN
+        generateValue: true
+      - key: DB_HOST
+        fromDatabase:
+          name: booking-master-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: booking-master-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: booking-master-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: booking-master-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: booking-master-db
+          property: password
+
+databases:
+  - name: booking-master-db
+    databaseName: bookingmaster
+    user: bookingmaster
+    plan: free
+    region: oregon
+    postgresMajorVersion: "17"
+    ipAllowList: []

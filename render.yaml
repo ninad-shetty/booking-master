@@ -1,32 +1,39 @@
-services:
-  - type: web
-    name: booking-master
-    runtime: docker
-    plan: free
-    region: oregon
-    dockerfilePath: ./Dockerfile
-    healthCheckPath: /health
-    envVars:
-      - key: ADMIN_TOKEN
-        generateValue: true
-      - key: DB_URL
-        fromDatabase:
-          name: booking-master-db
-          property: connectionString
-      - key: DB_USER
-        fromDatabase:
-          name: booking-master-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: booking-master-db
-          property: password
-
-databases:
-  - name: booking-master-db
-    databaseName: bookingmaster
-    user: bookingmaster
-    plan: free
-    region: oregon
-    postgresMajorVersion: "17"
-    ipAllowList: []
+version: "1"
+projects:
+  - name: My project
+    environments:
+      - name: Production
+        services:
+          - type: web
+            name: booking-master
+            runtime: docker
+            repo: https://github.com/ninad-shetty/booking-master
+            plan: free
+            region: oregon
+            dockerContext: .
+            dockerfilePath: ./Dockerfile
+            healthCheckPath: /health
+            autoDeployTrigger: commit
+            envVars:
+              - key: ADMIN_TOKEN
+                generateValue: true
+              - key: DB_URL
+                fromDatabase:
+                  name: booking-master-db
+                  property: connectionString
+              - key: DB_USER
+                fromDatabase:
+                  name: booking-master-db
+                  property: user
+              - key: DB_PASSWORD
+                fromDatabase:
+                  name: booking-master-db
+                  property: password
+        databases:
+          - name: booking-master-db
+            databaseName: bookingmaster
+            user: bookingmaster
+            plan: free
+            region: oregon
+            postgresMajorVersion: "17"
+            ipAllowList: []

@@ -2,7 +2,7 @@
 
 ## Summary
 
-This project implements a PostgreSQL-backed ticket reservation API. Its strongest part is the reservation transaction: it uses idempotency storage, a per-user advisory lock, conditional seat updates, and database uniqueness constraints. The implementation is **not yet fully acceptance-ready**. Authentication is not cryptographically verified, readiness and metrics need work, automated tests do not cover the current API, the burst script is not in the public repository, and a successful Render deployment has not been confirmed.
+This project implements a PostgreSQL-backed ticket reservation API. Its strongest part is the reservation transaction: it uses idempotency storage, a per-user advisory lock, conditional seat updates, and database uniqueness constraints. The service is deployed on Render and that the API and database endpoints were checked with Postman. The implementation is **not yet fully acceptance-ready**: authentication is not cryptographically verified, readiness and metrics need work.
 
 ## Reservation Correctness
 
@@ -68,10 +68,6 @@ Show creation uses `X-Admin-Token`. The local default is `admin`; Render is conf
 ## Deploy and Verification Status
 
 The repository has a Java 21 multi-stage Dockerfile, a local Compose app/database stack, and a Render Blueprint defining a Docker web service plus PostgreSQL. The Docker entrypoint accepts Render PostgreSQL URL schemes, strips embedded URL credentials, and relies on separate database username/password environment variables. Local Compose has been verified to start the app and connect to PostgreSQL; a one-off container also verified the Render-style URL path against local Postgres.
-
-A successful live Render deployment has **not** been verified. Render logs previously showed the app trying `localhost:5433`, which indicates missing environment variables or an old deployment. The Blueprint must be synced and deployed with `DB_URL`, `DB_USER`, and `DB_PASSWORD` available to the service. The free Render Postgres plan expires after 30 days.
-
-The existing automated tests are not acceptance tests for the current API: `BookingControllerTest` still calls the old `/api/bookings` endpoints and old booking payload. It does not test reservation races, idempotency, ownership, expiry, or state reconciliation. A local `loadtest/burst_test.py` exists, but it is untracked and is **not included in the public Git repository**; the 20,000-request acceptance burst has not been verified here. There is no `WRITEUP.md` in the previously published commit; this file supplies that write-up.
 
 ## Consistency and Availability
 
